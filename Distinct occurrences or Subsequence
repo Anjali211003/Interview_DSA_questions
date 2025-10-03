@@ -1,0 +1,58 @@
+----------------------------For GfG--------------------------
+
+
+class Solution {
+  public:
+      int seqCount(string s, string t) {
+        int m = t.length(), n = s.length();
+        if (m > n)
+        return 0;
+            vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+                for (int j = 0; j <= n; j++)
+        dp[0][j] = 1;
+
+    for (int i = 1; i <= m; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+
+           
+            if (t[i - 1] != s[j - 1])
+                dp[i][j] = dp[i][j - 1];
+            else
+
+                
+                dp[i][j] = (dp[i][j - 1] + dp[i - 1][j - 1]);
+        }
+    }
+
+    return dp[m][n];
+
+    }
+    int subseqCount(string &txt, string &pat) {
+         return  seqCount(txt, pat);
+        
+    }
+};
+
+------------------For Leetcode as it will not able to pass all test cases-----------------------
+
+class Solution {
+public:
+int numDistinct(string s, string t) {
+int n = s.length(), m = t.length();
+if (m > n) return 0;
+
+    vector<unsigned long long> dp(m + 1, 0);
+    dp[0] = 1;
+
+    for (char cs : s) {
+        for (int i = m; i >= 1; --i) {
+            if (cs == t[i - 1])
+                dp[i] += dp[i - 1];
+        }
+    }
+
+    return static_cast<int>(dp[m]);
+}
+};
