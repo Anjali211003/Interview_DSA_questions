@@ -1,0 +1,69 @@
+-------------Algorithm---------------
+
+1. Sort the Queries
+Sort queries by their starting point (li).
+
+2. Use a Sweeping Window & Heaps
+As you move index by index over nums, add queries starting at this index to a max-heap (by their end).
+
+Maintain a running heap of queries currently "assigned" to this index for decrement operations.
+
+3. Greedy Assignment at Each Index
+For position i, to decrement nums[i] to zero, you need that index to be covered by at least nums[i] queries (active assignments).
+
+If not enough running queries currently cover i, greedily pick from your available heap the queries that extend farthest right (maximize future coverage), and assign them.
+
+4. Removal Candidates
+Any unused queries are removal candidates.
+
+If you ever run out of available queries (heap is empty or no query extends over current i) when more coverage is needed, it's impossible: return -1.
+
+5. Return
+The number of unused queries is your answer.
+
+
+
+
+#include <vector>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    int maxRemoval(vector<int>& nums, vector<vector<int>>& queries) {
+        int n = nums.size();
+        int m = queries.size();
+        // Sort queries by starting index
+        sort(queries.begin(), queries.end());
+        int qi = 0;
+        // Max-heap for available query ends
+        priority_queue<int> available;
+        // Min-heap for running (currently assigned) query ends
+        priority_queue<int, vector<int>, greater<>> running;
+
+        for (int i = 0; i < n; ++i) {
+            // Push queries whose start <= i into available
+            while (qi < m && queries[qi][0] <= i) {
+                available.push(queries[qi][1]);
+                ++qi;
+            }
+            // Remove queries from running which do not cover i
+            while (!running.empty() && running.top() < i)
+                running.pop();
+            // Assign enough queries to cover the need at index i
+            while (nums[i] > (int)running.size()) {
+                // Remove expired queries from available
+                while (!available.empty() && available.top() < i)
+                    available.pop();
+                // If no query can cover i, return -1
+                if (available.empty())
+                    return -1;
+                running.push(available.top());
+                available.pop();
+            }
+        }
+        // All remaining available queries can be removed
+        return available.size();
+    }
+};
