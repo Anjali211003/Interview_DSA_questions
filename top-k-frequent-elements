@@ -1,0 +1,44 @@
+-----------------simple solution using dictionary----------------
+
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        frequency = {}
+        for num in nums:
+            if num not in frequency:
+                frequency[num] = 1
+            else:
+                frequency[num] = frequency[num] + 1
+        frequency = dict(sorted(frequency.items(), key=lambda x: x[1], reverse=True))
+        result = list(frequency.keys())[:k]
+        return result
+        
+
+-----------------using heap------------------------
+
+
+
+class Solution {
+public:
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        unordered_map<int, int> freq;
+
+        // Step 1: Count frequencies
+        for (int num : nums) freq[num]++;
+
+        // Step 2: Maintain a min-heap of size k
+        for (auto& it : freq) {
+            pq.push({it.second, it.first});
+            if (pq.size() > k) pq.pop();
+        }
+
+        // Step 3: Extract results
+        vector<int> res;
+        while (!pq.empty()) {
+            res.push_back(pq.top().second);
+            pq.pop();
+        }
+
+        return res;
+    }
+};
